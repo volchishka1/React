@@ -1,31 +1,45 @@
-import React from 'react';
-import s from './MyPosts.module.css';
-import Post from './Post/Post';
+import React from 'react'
+import { addPostCreator, updateNewTextPostCreator } from '../../../redux/state'
+import s from './MyPosts.module.css'
+import Post from './Post/Post'
 
 
 const MyPosts = (props) => {
+  let postsElement = props.posts.map(p => (
+    <Post message={p.message} likesCount={p.likesCount} />
+  ))
 
-let postsElement = 
-    props.posts.map ( p => <Post message={ p.message } likesCount={ p.likesCount } />)
+  let newPostElement = React.createRef()
 
-    return (
-        <div class={ s.postsBlock }>
-            <div>
-               <h3 className={ s.myPosts }>My posts</h3> 
-            </div>
-            <div>
-                <textarea></textarea>
-            </div>
-            <div>
-            <button>Add post</button>
-            </div>
-            <div className={ s.posts }>
-                
-                {postsElement}
+  let addPost = () => {
+    props.dispatch(addPostCreator())
+  }
 
-            </div>
-        </div>
-    )
+  let onPostChange = () => {
+    let text = newPostElement.current.value;
+    const action = updateNewTextPostCreator(text);
+    props.dispatch(action)
+  }
+
+  return (
+    <div className={s.postsBlock}>
+      <div>
+        <h3 className={s.myPosts}>My posts</h3>
+      </div>
+      <div>
+        <textarea
+          onChange={onPostChange}
+          ref={newPostElement}
+          value={props.newPostText}
+          placeholder="Enter Your post"
+        />
+      </div>
+      <div>
+        <button onClick={addPost}>Add post</button>
+      </div>
+      <div className={s.posts}>{postsElement}</div>
+    </div>
+  )
 }
 
-export default MyPosts;
+export default MyPosts
